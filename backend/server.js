@@ -168,6 +168,18 @@ app.post("/addMessage", (req, res) => {
     });
 });
 
+app.get('/dataFile', (req, res) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
 app.post("/removeFriend", (req, res) => {
     const friendToRemove = req.body;
 
