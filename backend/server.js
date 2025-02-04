@@ -1,245 +1,241 @@
 import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import cors from 'cors';
-import fs from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
+import User from './models/User.js';
+import Message from './models/Message.js';
+import Friend from './models/Friend.js';
 
-
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
-app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"]
-}));
-
-
+app.use(cors());
 app.use(express.json());
 
-// Ensure data directory exists
-const dataDir = join(__dirname, 'data');
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
-}
+const MongoDB_URI = "mongodb+srv://amansharmayt19:nvrQpvCAPAWSEh9C@scripterx.7nhap.mongodb.net/ChatIT?retryWrites=true&w=majority&appName=ScripterX";
 
-const dataFile = join(dataDir, 'data.json');
+// Connect to MongoDB
+mongoose.connect(MongoDB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-// Initialize data.json if it doesn't exist
-if (!fs.existsSync(dataFile)) {
-    fs.writeFileSync(dataFile, JSON.stringify([], null, 2));
-}
+/* ────────────────────────────────────────────
+   ✅ USER ROUTES (Register, Login, Get Users)
+   ──────────────────────────────────────────── */
 
-// Registration endpoint
-app.post('/registerUser', (req, res) => {
+// 📌 Register a new user
+app.post('/register', async (req, res) => {
     try {
-        const userData = req.body;
-        console.log('Received registration request:', userData);
+        const { username, email, password } = req.body;
+        if (!username || !email || !password) return res.status(400).json({ message: "All fields are required" });
 
-        // Validate required fields
-        if (!userData.username || !userData.email || !userData.password) {
-            console.log('Missing required fields');
-            return res.status(400).json({
-                message: 'Missing required fields'
-            });
-        }
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: "Email already exists" });
 
-        // Read existing data
-        let data = [];
-        try {
-            const fileContent = fs.readFileSync(dataFile, 'utf8');
-            console.log('Current file content:', fileContent);
-            data = JSON.parse(fileContent);
-
-            if (!Array.isArray(data)) {
-                console.log('Data is not an array, resetting to empty array');
-                data = [];
-            }
-        } catch (readError) {
-            console.error('Error reading data file:', readError);
-            data = [];
-        }
-
-        // Check if username or email already exists
-        const existingUser = data.find(user =>
-            user.username === userData.username ||
-            user.email === userData.email
-        );
-
-        if (existingUser) {
-            console.log('User already exists');
-            return res.status(400).json({
-                message: 'Username or email already exists'
-            });
-        }
-
-        // Generate unique ID and add to user data
-        const { confirmPassword, ...userDataWithoutConfirm } = userData;
-        const userWithId = {
-            ...userDataWithoutConfirm,
+        // const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            username,
+            email,
+            password,
             uid: uuidv4(),
-            createdAt: new Date().toISOString()
-        };
-
-        // Add new user to data array
-        data.push(userWithId);
-
-        // Save updated data
-        fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
-        console.log('User registered successfully:', userWithId.username);
-
-        res.status(200).json({
-            message: 'Registration successful',
-            user: userWithId
+            createdAt: new Date(),
         });
+
+        await newUser.save();
+        res.status(201).json({ message: "User registered successfully", user: newUser });
+
     } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ message: 'Server error occurred' });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 });
 
-const friendPath = path.join(__dirname, "data", "friends.json");
-app.post("/addFriend", (req, res) => {
-    const newFriend = req.body;
-
-    fs.readFile(friendPath, "utf8", (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: "Error reading file" });
-        }
-
-        const friend = JSON.parse(data);
-        friend.push(newFriend);
-
-        fs.writeFile(friendPath, JSON.stringify(friend, null, 2), "utf8", (err) => {
-            if (err) {
-                return res.status(500).json({ error: "Error writing file" });
-            }
-            res.status(200).json({ message: "User added successfully!", friend });
-        });
-    });
-});
-
-const messagePath = path.join(__dirname, "data", "messages.json");
-// server.js - Add this endpoint
-app.get('/getMessages', (req, res) => {
-    const chatId = req.query.chatId;
+// 📌 Login a user
+app.post('/login', async (req, res) => {
     try {
-        const messages = JSON.parse(fs.readFileSync(messagePath, 'utf8'));
-        const filtered = messages.filter(msg => msg.chatId === chatId);
-        res.json(filtered);
+        const { email, password } = req.body;
+        if (!email || !password) return res.status(400).json({ message: "All fields are required" });
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: "User not found" });
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) return res.status(401).json({ message: "Invalid password" });
+
+        const token = jwt.sign({ uid: user.uid }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        res.status(200).json({ message: "Login successful", token, user });
+
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 });
 
-app.get('/dataFile', (req, res) => {
+// 📌 Get all users
+app.get('/users', async (req, res) => {
     try {
-        const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-
-app.get('/friendsFile', (req, res) => {
-    try {
-        const data = JSON.parse(fs.readFileSync(friendPath, 'utf8'));
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-
-
-// Updated add message endpoint
-app.post("/addMessage", (req, res) => {
-    const newMessage = req.body;
-
-    fs.readFile(messagePath, "utf8", (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: "Error reading file" });
-        }
-
-        const messages = JSON.parse(data);
-        messages.push({
-            ...newMessage,
-            id: uuidv4(),
-            timestamp: new Date().toISOString()
-        });
-
-        fs.writeFile(messagePath, JSON.stringify(messages, null, 2), "utf8", (err) => {
-            if (err) {
-                return res.status(500).json({ error: "Error writing file" });
-            }
-            res.status(200).json({ message: "Message added successfully!", messages });
-        });
-    });
-});
-
-app.post("/removeFriend", (req, res) => {
-    const friendToRemove = req.body;
-
-    fs.readFile(friendPath, "utf8", (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: "Error reading file" });
-        }
-
-        let friends = JSON.parse(data);
-        const updatedFriends = friends.filter((friend) => friend.uid !== friendToRemove.uid);
-
-        fs.writeFile(friendPath, JSON.stringify(updatedFriends, null, 2), "utf8", (err) => {
-            if (err) {
-                return res.status(500).json({ error: "Error writing file" });
-            }
-            res.status(200).json({ message: "Friend removed successfully!", updatedFriends });
-        });
-    });
-});
-
-// GET endpoint to search users by email and password
-app.get('/users', (req, res) => {
-    try {
-        console.log('Received login request:', req.query);
-        const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
         const { email, password } = req.query;
 
-        // If email and password provided, search for matching user
-        if (email && password) {
-            console.log('Searching for user with email:', email);
-            const user = data.find(u =>
-                u.email === email &&
-                u.password === password
-            );
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
 
-            if (user) {
-                console.log('User found, sending response');
-                res.json([user]);
-            } else {
-                console.log('No user found with provided credentials');
-                res.json([]);
-            }
+        const user = await User.findOne({ email, password });
+
+        if (user) {
+            res.json([user]); // Return user in an array to match the frontend response structure
         } else {
-            console.log('No email/password provided');
-            res.json(data);
+            res.json([]); // Empty array if user not found
         }
     } catch (error) {
-        console.error('Detailed error in /users:', error);
-        res.status(500).json({ message: 'Error reading users', error: error.message });
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+
+/* ────────────────────────────────────────────
+   ✅ MESSAGE ROUTES (Send, Get Messages)
+   ──────────────────────────────────────────── */
+
+// 📌 Send a message
+app.post('/sendMessage', async (req, res) => {
+    try {
+        const { text, uid, chatId, sender } = req.body;
+        if (!text || !uid || !chatId || !sender) return res.status(400).json({ message: "All fields are required" });
+
+        const newMessage = new Message({
+            text,
+            uid,
+            chatId,
+            sender,
+            id: uuidv4(),
+            timestamp: new Date(),
+        });
+
+        await newMessage.save();
+        res.status(201).json({ message: "Message sent", messageData: newMessage });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+
+app.post('/deleteMessage', async (req, res) => {
+    try {
+        const { messageId } = req.body;
+
+        const deletedMessage = await Message.findOneAndDelete({ id: messageId });
+
+        if (!deletedMessage) {
+            return res.status(404).json({ message: 'Message not found' });
+        }
+
+        res.status(200).json({ message: 'Message deleted successfully!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+app.post('/removeFriend', async (req, res) => {
+    try {
+        const { uid } = req.body;
+
+        if (!uid) {
+            return res.status(400).json({ message: 'Friend UID is required' });
+        }
+
+        const deletedFriend = await Friend.findOneAndDelete({ uid });
+
+        if (!deletedFriend) {
+            return res.status(404).json({ message: 'Friend not found' });
+        }
+
+        res.status(200).json({ message: 'Friend removed successfully!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
     }
 });
 
 
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// 📌 Get messages for a chat
+app.get('/getMessages', async (req, res) => {
+    try {
+        const { chatId } = req.query;
+
+        if (!chatId) {
+            return res.status(400).json({ message: 'chatId is required' });
+        }
+
+        const messages = await Message.find({ chatId });
+
+        res.json(messages);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
 });
+
+
+/* ────────────────────────────────────────────
+   ✅ FRIEND ROUTES (Add, Get Friends)
+   ──────────────────────────────────────────── */
+
+// 📌 Add a friend
+app.post('/addFriend', async (req, res) => {
+    try {
+        const { uid, username, email, user } = req.body;
+        if (!uid || !username || !email || !user) return res.status(400).json({ message: "All fields are required" });
+
+        const existingFriendship = await Friend.findOne({ uid, user });
+        if (existingFriendship) return res.status(400).json({ message: "Already friends" });
+
+        const newFriend = new Friend({ uid, username, email, user });
+
+        await newFriend.save();
+        res.status(201).json({ message: "Friend added successfully", friend: newFriend });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+
+// 📌 Get friends of a user
+app.get('/friends/:user', async (req, res) => {
+    try {
+        const { user } = req.params;
+        const friends = await Friend.find({ user });
+        res.status(200).json(friends);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+
+app.get('/dataFile', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+app.get('/friendsFile', async (req, res) => {
+    try {
+        const friends = await Friend.find();
+        res.json(friends);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+
+/* ────────────────────────────────────────────
+   ✅ SERVER SETUP
+   ──────────────────────────────────────────── */
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

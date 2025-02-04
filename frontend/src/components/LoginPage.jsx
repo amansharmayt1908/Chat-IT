@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './LoginPage.css'
-
+const serverUrl = import.meta.env.VITE_BASE_URL;
 const LoginPage = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -24,7 +24,7 @@ const LoginPage = () => {
       try {
         console.log('Attempting login with:', formData.email);
         
-        const response = await fetch(`https://app-backend-e41v.onrender.com/users?email=${formData.email}&password=${formData.password}`, {
+        const response = await fetch(`${serverUrl}/users?email=${formData.email}&password=${formData.password}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

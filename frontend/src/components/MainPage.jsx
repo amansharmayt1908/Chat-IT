@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './MainPage.css'
-
+const serverUrl = import.meta.env.VITE_BASE_URL;
 
 const MainPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -13,7 +13,7 @@ const MainPage = () => {
     const navigate = useNavigate();
   
     useEffect(() => {
-      fetch("https://app-backend-e41v.onrender.com/dataFile")
+      fetch(`${serverUrl}/dataFile`)
         .then((response) => response.json())
         .then((data) => setUsers(data))
         .catch((error) => console.error("Error fetching data:", error));
@@ -21,7 +21,7 @@ const MainPage = () => {
   
     useEffect(() => {
       const loggedInUser = JSON.parse(localStorage.getItem("user")); // Get logged-in user data
-      fetch("https://app-backend-e41v.onrender.com/friendsFile")
+      fetch(`${serverUrl}/friendsFile`)
         .then((response) => response.json())
         .then((friendList) => {
           // Filter friends to show only those added by the logged-in user
@@ -63,7 +63,7 @@ const MainPage = () => {
       
     
       try {
-        const response = await fetch("https://app-backend-e41v.onrender.com/addFriend", {
+        const response = await fetch(`${serverUrl}/addFriend`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -107,7 +107,7 @@ const MainPage = () => {
   
   const handleRemove = async (uid) => {
     try {
-      const response = await fetch("https://app-backend-e41v.onrender.com/removeFriend", {
+      const response = await fetch(`${serverUrl}/removeFriend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,6 +151,8 @@ const MainPage = () => {
         </div>
   
         <div className="search-container">
+        <div className="back-button" onClick={() => window.history.back()}>{"<"} Back</div>
+          
           <input
             type="text"
             placeholder="Search contacts..."
@@ -203,9 +205,11 @@ const MainPage = () => {
             </div>
           ))}
         </div>
-  
+          <div className="main_user">
+            <div className="user_name"> @{JSON.parse(localStorage.getItem("user")).username}</div>
+          </div>
         <button onClick={handleLogout} className="logout-button">
-          Logout
+          Logout 
         </button>
       </div>
     )

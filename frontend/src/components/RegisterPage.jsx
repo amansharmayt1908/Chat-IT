@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './RegisterPage.css' 
-
+const serverUrl = import.meta.env.VITE_BASE_URL;
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
         username: '',
@@ -18,7 +18,7 @@ const RegisterPage = () => {
           [name]: value
         }))
       }
-    
+      
       const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -29,7 +29,7 @@ const RegisterPage = () => {
         }
     
         try {
-          const response = await fetch('https://app-backend-e41v.onrender.com/registerUser', {
+          const response = await fetch(`${serverUrl}/register`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

@@ -1,167 +1,287 @@
+/* Minimalistic & Colorful Chat App Styles with Enhanced Background Colours */
+
 .main-container {
-    max-width: 800px;
-    min-width: 15%;
-    height: 100%;
-    max-height: 80vh;
-    min-height: 80vh;
-    margin: 2rem auto;
-    padding: 1rem;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: auto;
-    overflow-x: hidden;
-  }
-  
-  .main-container .search-container {
-    margin-bottom: 1rem;
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .main-container .search-input {
-    min-width: 15%;
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  
-  .main-container .search-input:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-  }
-  
-  .main-container .contacts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.8rem;
-  }
-  .main-container .header {
-    margin-top: 0rem;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    min-width: 15%;
-    width: 800px;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-  }
-  .main-container .contact-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .main-container .contact-item:hover {
-    background: #e9ecef;
-  }
-  
-  .main-container .contact-avatar {
-    width: 40px;
-    height: 40px;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    margin-right: 1rem;
-  }
-  
-  .main-container .contact-info {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    /* gap: 0.25rem; */
-  }
-  
-  .main-container .contact-name {
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-  }
-  
-  .main-container .contact-message {
-    color: #6c757d;
-    font-size: 0.9rem;
-  }
-  
-  .main-container .contact-time {
-    color: #6c757d;
-    font-size: 0.8rem;
-    min-width: 70px;
-    text-align: right;
-    
-  }
-  
-  .main-container .logout-button {
-    margin-top: 1rem;
-    
-    position: absolute;
-    bottom: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    
-  }
-  .main-container .search-button{
-    /* margin-top: 1rem; */
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-  }
-  .main-container .addbtn{
-    cursor: pointer;
-    /* padding: 0.5rem 1rem; */
-    height: 30px;
-    width: 50px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-  }
-  .main-container .addedFriends{
-    padding: 20px 20px;
-    font-size: 1.5rem;
-  }
-  
-  .main-container .friends{
-    /* background-color: #007bff; */
-    color: rgb(0, 0, 0);
-    padding: 20px 20px;
-    font-size: 1.5rem;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  .main-container .friend-email{
-    display: flex;
-    justify-content: space-between;
-    
-  }
-  .main-container .removebtn{
-    cursor: pointer;
-    /* padding: 0.5rem 1rem; */
-    height: 30px;
-    width: 70px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-  }
+  max-width: 800px;
+  min-width: 15%;
+  height: 100%;
+  max-height: 80vh;
+  min-height: 80vh;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: #fff;  /* Clean white background for the container */
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: auto;
+  overflow-x: hidden;
+  border: 1px solid #e0e7ff;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem; /* Smaller overall font size */
+}
+
+/* Header Section with Logout Button */
+.main-container .header {
+  margin-top: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1e293b;
+  border-bottom: 1px solid #e0e7ff;
+  padding-bottom: 0.75rem;
+  position: relative;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);  /* Soft, colorful gradient */
+}
+
+/* Smaller Logout Button positioned in the upper-right corner */
+.main-container .logout-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 1.5rem;
+  background: linear-gradient(135deg, #a18cd1, #fbc2eb);  /* Vibrant gradient */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem; /* Reduced padding for minimalism */
+  font-size: 0.7rem;      /* Smaller font size */
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(161, 140, 209, 0.3);
+}
+
+.main-container .main_user{
+  position: absolute;
+  top: 0.5rem;
+  right: 50%;
+  /* background: rgb(0, 255, 255)  Vibrant gradient */
+  color: rgb(0, 0, 0);
+  border: 2px solid rgb(0, 47, 255);
+  padding: 0.3rem 0.3rem; /* Reduced padding for minimalism */
+
+}
+
+.main-container .logout-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(161, 140, 209, 0.5);
+}
+
+/* Search Section */
+.main-container .search-container {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  border: 1px solid #e0e7ff;
+  /* A light pastel background to separate search area */
+  background-color: #f0f9ff;
+}
+
+.main-container .search-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  background: #f9f9ff;
+}
+
+.main-container .search-input:focus {
+  outline: none;
+  border-color: #7dd3fc;
+  box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.3);
+}
+
+.main-container .search-button {
+  background: linear-gradient(135deg, #7dd3fc, #60a5fa);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
+  border: none;
+  color: white;
+}
+
+.main-container .search-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(96, 165, 250, 0.5);
+}
+
+/* Contacts List */
+.main-container .contacts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  background-color: #fcfcff;  /* Very light background for contacts */
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+/* Contact Item */
+.main-container .contact-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #f1f5f9;
+}
+
+.main-container .contact-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(125, 211, 252, 0.2);
+  border-color: #7dd3fc;
+}
+
+.main-container .contact-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #ffb347, #ffcc33);  /* Vibrant avatar colors */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  margin-right: 0.75rem;
+  box-shadow: 0 3px 6px rgba(255, 179, 71, 0.3);
+}
+
+.main-container .contact-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-container .contact-name {
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: -0.25px;
+}
+
+.main-container .contact-message {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.main-container .contact-time {
+  color: #94a3b8;
+  font-size: 0.7rem;
+  min-width: 60px;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Add Button */
+.main-container .addbtn {
+  background: linear-gradient(135deg, #fca5a5, #f87171);  /* Warm, inviting tones */
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(248, 113, 113, 0.3);
+  padding: 0.5rem 0.75rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.main-container .addbtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(248, 113, 113, 0.5);
+}
+
+/* Friends Section */
+.main-container .friends {
+  color: #1e293b;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #f0fdf4; /* Light mint background for friends section */
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.main-container .friend-email {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  transition: all 0.3s ease;
+  border: 1px solid #f1f5f9;
+}
+
+.main-container .friend-email:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 8px rgba(125, 211, 252, 0.2);
+}
+
+/* Remove Button */
+.main-container .removebtn {
+  background: #ffe6e6;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.main-container .removebtn:hover {
+  background: #fee2e2;
+  transform: translateY(-1px);
+}
+
+/* Back Button */
+.main-container .back-button {
+  background: rgba(125, 211, 252, 0.2);
+  color: #2563eb;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.main-container .back-button:hover {
+  background: rgba(125, 211, 252, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Scrollbar Styling */
+.main-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.main-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.main-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
