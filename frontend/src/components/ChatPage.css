@@ -1,5 +1,3 @@
-/* ChatLayout.css - Enhanced Version */
-
 .chat-container {
     display: flex;
     flex-direction: column;
@@ -196,4 +194,83 @@
 
 .chat-container .deleteMessage:hover {
     background-color: #d32f2f;
+}
+/* Compact Mobile View */
+@media (max-width: 768px) {
+    .chat-container {
+        height: 100vh;
+        width: 100%;
+        max-width: 100vw;
+        border-radius: 0;
+        font-size: 0.9rem; /* Adjust font size for smaller screens */
+        overflow: hidden; /* Ensure no content overflows */
+    }
+
+    /* Header */
+    .chat-container .header {
+        padding: 0.5rem;
+        font-size: 1rem; /* Slightly smaller header font */
+    }
+
+    .chat-container .back-button {
+        height: 1.25rem;
+        width: 2.5rem;
+        font-size: 0.6rem;
+    }
+
+    /* Messages Area */
+    .chat-container .messages {
+        padding: 0.5rem;
+        gap: 0.5rem;
+        overflow-y: auto; /* Allow scrolling vertically */
+        max-height: calc(100vh - 7rem); /* Adjust for header and input box */
+    }
+
+    .chat-container .message {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .chat-container .message.me {
+        max-width: 70%; /* Adjust bubble width */
+    }
+
+    .chat-container .message.other {
+        max-width: 70%; /* Keep consistent with 'me' messages */
+    }
+
+    /* Input Area */
+    .chat-container .input-box {
+        padding: 0.5rem;
+    }
+
+    .chat-container .input {
+        font-size: 0.9rem; /* Reduce input font size */
+        padding: 0.4rem 0.6rem;
+    }
+
+    .chat-container .send-button {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    /* Scrollbar Customization for Compactness */
+    .chat-container .messages::-webkit-scrollbar {
+        width: 6px; /* Thinner scrollbar for mobile */
+    }
+
+    .chat-container .messages::-webkit-scrollbar-thumb {
+        background: #a0aec0;
+    }
+
+    .chat-container .messages::-webkit-scrollbar-thumb:hover {
+        background: #718096;
+    }
+
+    /* Delete Button */
+    .chat-container .delete-button,
+    .chat-container .deleteMessage {
+        width: 2.5rem; /* Smaller width */
+        font-size: 0.7rem; /* Compact text */
+    }
 }
