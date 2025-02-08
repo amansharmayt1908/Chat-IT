@@ -8,6 +8,8 @@ import LoginPage from './components/LoginPage'
 import MainPage from './components/MainPage'
 import ChatPage from './components/ChatPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminLogin from './components/AdminLogin'
+import AdminPage from './components/AdminPage'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,6 +19,9 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<RegisterPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path='/adminLogin' element={<AdminLogin />} />
+          <Route path='/adminPage' 
+           element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route 
             path="/main" 
             element={
@@ -25,6 +30,7 @@ createRoot(document.getElementById('root')).render(
               </ProtectedRoute>
             } 
           />
+          
           <Route 
             path="/chat/:chatId" 
             element={
@@ -33,7 +39,7 @@ createRoot(document.getElementById('root')).render(
               </ProtectedRoute>
             } 
           />
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/register" replace />} />
           
         </Routes>
       </div>

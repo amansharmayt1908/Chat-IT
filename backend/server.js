@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import User from './models/User.js';
 import Message from './models/Message.js';
 import Friend from './models/Friend.js';
+import Admin from './models/Admin.js';
+
 
 dotenv.config();
 
@@ -43,6 +45,7 @@ app.post('/register', async (req, res) => {
             username,
             email,
             password,
+            userstatus : "pending",
             uid: uuidv4(),
             createdAt: new Date(),
         });
@@ -76,6 +79,31 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// 📌 Admin Login
+
+
+// Admin Login Route
+app.get("/adminlogin", async (req, res) => {
+    try {
+      const { username, password } = req.query;
+  
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+  
+      const admin = await Admin.findOne({ username, password });
+  
+      if (admin) {
+        console.log("Admin found:", admin);
+        res.json([admin]); // Return admin in an array
+      } else {
+        res.json([]); // Empty array if admin not found
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
+    }
+  });
+
 // 📌 Get all users
 app.get('/users', async (req, res) => {
     try {
@@ -85,10 +113,16 @@ app.get('/users', async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required' });
         }
 
-        const user = await User.findOne({ email, password });
+        const user = await User.findOne({ email, password});
+        // const approveduser = await User.findOne({userstatus : "approved"});
+        
 
         if (user) {
-            res.json([user]); // Return user in an array to match the frontend response structure
+            if (user.userstatus === "approved") {
+                res.json([user]); // Return user in an array
+            } else {
+                res.json({ message: "Your account is not approved yet! Contact Admin .. " });
+            }
         } else {
             res.json([]); // Empty array if user not found
         }
@@ -233,6 +267,45 @@ app.get('/friendsFile', async (req, res) => {
     }
 });
 
+app.post("/removeuser", async (req, res) => {
+    try {
+        const { username } = req.body;
+
+        if (!username) {
+            return res.status(400).json({ message: ' username is required' });
+        }
+
+        const deleteduser = await User.findOneAndDelete({ username });
+
+        if (!deleteduser) {
+            return res.status(404).json({ message: 'Friend not found' });
+        }
+
+        res.status(200).json({ message: 'Friend removed successfully!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+app.post("/approveuser", async (req, res) => {
+    try {
+        const { username } = req.body;
+
+        if (!username) {
+            return res.status(400).json({ message: ' username is required' });
+        }
+
+        const updateduser = await User.findOneAndUpdate({ username }, { userstatus: "approved" }, { new: true });
+
+        if (!updateduser) {
+            return res.status(404).json({ message: 'Friend not found' });
+        }
+
+        res.status(200).json({ message: 'Friend removed successfully!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
 
 /* ────────────────────────────────────────────
    ✅ SERVER SETUP
