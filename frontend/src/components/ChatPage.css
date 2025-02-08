@@ -203,7 +203,7 @@
         max-width: 100vw;
         border-radius: 0;
         font-size: 0.9rem; /* Adjust font size for smaller screens */
-        overflow: hidden; /* Ensure no content overflows */
+        overflow-y: hidden; /* Ensure no content overflows */
     }
 
     /* Header */
